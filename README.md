@@ -8,6 +8,16 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-blue.svg)](https://www.mysql.com/)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
+## 🌐 Live Demo
+
+| | Link |
+|---|---|
+| **Frontend (the app)** | https://card-payment-transaction-simulator-mtj6.onrender.com |
+| **Backend (API)** | https://card-payment-transaction-simulator.onrender.com |
+| **Backend health check** | https://card-payment-transaction-simulator.onrender.com/actuator/health |
+
+> Hosted on Render's free plan. If the app has been idle, the first load can take about a minute while the backend wakes up.
+
 ---
 
 ## 📖 Executive Summary
