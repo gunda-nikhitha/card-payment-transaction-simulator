@@ -1,0 +1,142 @@
+# ====================================
+# Card Payment Transaction Simulator
+# Application Configuration
+# ====================================
+
+spring:
+  application:
+    name: card-payment-transaction-simulator
+
+  # Database Configuration
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/cpts_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:cpts_user}
+    password: ${DB_PASSWORD:cpts_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: 2
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+      pool-name: CPTSHikariPool
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # Cache Configuration
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=300s
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+
+# Server Configuration
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+app:
+  jwt:
+    secret: ${JWT_SECRET:CHANGE_ME_IN_PRODUCTION_use_a_very_long_random_string_at_least_64_chars}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+    issuer: card-payment-transaction-simulator
+
+  # CORS Configuration
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+  # Simulation Configuration
+  simulation:
+    max-amount: ${SIM_MAX_AMOUNT:1000000.00}
+    default-currency: INR
+    allowed-currencies: INR,USD,EUR,GBP
+    approve-probability: ${SIM_APPROVE_PROB:0.75}
+    decline-probability: ${SIM_DECLINE_PROB:0.20}
+    timeout-probability: ${SIM_TIMEOUT_PROB:0.05}
+    processing-delay-ms: ${SIM_PROCESSING_DELAY:500}
+
+  # AI Configuration
+  ai:
+    enabled: ${AI_ENABLED:false}
+    provider: ${AI_PROVIDER:openai}
+    api-key: ${AI_API_KEY:}
+    model: ${AI_MODEL:gpt-3.5-turbo}
+    api-url: ${AI_API_URL:https://api.openai.com/v1/chat/completions}
+    max-tokens: ${AI_MAX_TOKENS:1024}
+    temperature: ${AI_TEMPERATURE:0.7}
+    timeout-seconds: ${AI_TIMEOUT:30}
+    max-context-documents: ${AI_MAX_CONTEXT_DOCS:5}
+    max-message-length: ${AI_MAX_MESSAGE_LENGTH:2000}
+    max-requests-per-minute: ${AI_RATE_LIMIT:10}
+
+  # Rate Limiting
+  rate-limit:
+    login-attempts-per-minute: ${RATE_LIMIT_LOGIN:10}
+    transaction-per-minute: ${RATE_LIMIT_TXN:20}
+    ai-requests-per-minute: ${RATE_LIMIT_AI:10}
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true
+  health:
+    db:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.jfs.cpts: ${LOG_LEVEL:INFO}
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# SpringDoc / Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

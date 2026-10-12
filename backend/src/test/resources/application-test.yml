@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: card-payment-transaction-simulator-test
+
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: false
+
+  flyway:
+    enabled: false
+
+  cache:
+    type: none
+
+app:
+  jwt:
+    secret: "test_secret_key_that_is_at_least_64_bytes_long_for_hs512_cryptographic_signing_test_environment_123456789"
+    expiration-ms: 3600000
+    issuer: card-payment-transaction-simulator-test
+  cors:
+    allowed-origins: "http://localhost:5173"
+  simulation:
+    max-amount: 1000000.00
+    default-currency: INR
+    allowed-currencies: INR,USD,EUR,GBP
+    approve-probability: 0.75
+    decline-probability: 0.20
+    timeout-probability: 0.05
+    processing-delay-ms: 10
+  ai:
+    enabled: false
+    api-key: ""
+  rate-limit:
+    login-attempts-per-minute: 1000
+    transaction-per-minute: 1000
+    ai-requests-per-minute: 1000
