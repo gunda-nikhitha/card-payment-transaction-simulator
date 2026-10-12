@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cpts-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: cpts_db
+      MYSQL_USER: cpts_user
+      MYSQL_PASSWORD: cpts_password
+      MYSQL_ROOT_PASSWORD: cpts_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - cpts_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "cpts_user", "-pcpts_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cpts-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cpts-backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/cpts_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: cpts_user
+      DB_PASSWORD: cpts_password
+      JWT_SECRET: super_secret_jwt_key_that_is_at_least_64_bytes_long_for_hs512_simulation_engine_cpts_platform
+      CORS_ALLOWED_ORIGINS: "http://localhost,http://localhost:3000,http://localhost:5173,http://localhost:8080"
+      AI_ENABLED: "false"
+      AI_API_KEY: ""
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - cpts-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cpts-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "3000:80"
+    networks:
+      - cpts-network
+
+volumes:
+  cpts_mysql_data:
+    driver: local
+
+networks:
+  cpts-network:
+    driver: bridge

@@ -1,0 +1,73 @@
+# ==========================================
+# Build artifacts
+# ==========================================
+backend/target/
+frontend/dist/
+frontend/node_modules/
+*.jar
+*.war
+*.class
+
+# ==========================================
+# IDE and editor files
+# ==========================================
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+nbproject/
+nbbuild/
+nbdist/
+nb-configuration.xml
+
+# ==========================================
+# Environment and secrets
+# ==========================================
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# ==========================================
+# Operating system files
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Logs
+# ==========================================
+*.log
+logs/
+
+# ==========================================
+# Database
+# ==========================================
+database/data/
+*.sql.bak
+
+# ==========================================
+# Docker
+# ==========================================
+docker-compose.override.yml
+
+# ==========================================
+# Test and coverage
+# ==========================================
+coverage/
+*.lcov
+test-results/
